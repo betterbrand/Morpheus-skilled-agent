@@ -1,0 +1,12 @@
+[Unit]
+Description=Morpheus Node Manager Ops Agent Timer
+Requires=morpheus-ops-agent.service
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+AccuracySec=30s
+Unit=morpheus-ops-agent.service
+
+[Install]
+WantedBy=timers.target

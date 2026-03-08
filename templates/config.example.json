@@ -1,0 +1,18 @@
+{
+  "apiUrl": "http://localhost:8082",
+  "apiUser": "admin",
+  "apiPassword": "CHANGE_ME",
+  "checkIntervalMs": 300000,
+  "thresholds": {
+    "minMorWei": "500000000000000000",
+    "minEthWei": "10000000000000000"
+  },
+  "autoClaim": true,
+  "maxClaimsPerCycle": 5,
+  "autoRestart": true,
+  "maxConsecutiveRestarts": 3,
+  "alerts": {
+    "webhookUrl": "",
+    "type": "generic"
+  }
+}

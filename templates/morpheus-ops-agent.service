@@ -1,0 +1,17 @@
+[Unit]
+Description=Morpheus Node Manager Ops Agent
+After=network.target
+
+[Service]
+Type=oneshot
+User=morpheus
+WorkingDirectory=/opt/morpheus-node-manager
+ExecStart=/usr/bin/node dist/ops-agent/index.js --once --config /etc/morpheus-node-manager/config.json
+TimeoutStartSec=240s
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=morpheus-ops-agent
+OnFailure=morpheus-ops-agent-alert@%n.service
+
+[Install]
+WantedBy=multi-user.target
