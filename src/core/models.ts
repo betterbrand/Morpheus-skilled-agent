@@ -20,8 +20,7 @@ async function enrichModel(
 
   try {
     const raw = await client.get<{ bids: BidResponse[] } | BidResponse[]>(
-      `/blockchain/bids`,
-      { modelId: model.Id }
+      `/blockchain/models/${model.Id}/bids`
     );
     const bids = Array.isArray(raw) ? raw : (raw as { bids: BidResponse[] }).bids ?? [];
     const active = bids.filter(bidIsActive);
@@ -144,8 +143,7 @@ export async function removeModel(
   let bidsRemoved = 0;
   try {
     const raw = await client.get<{ bids: BidResponse[] } | BidResponse[]>(
-      `/blockchain/bids`,
-      { modelId: params.modelId }
+      `/blockchain/models/${params.modelId}/bids`
     );
     const bids = Array.isArray(raw) ? raw : (raw as { bids: BidResponse[] }).bids ?? [];
     const myBids = bids.filter(

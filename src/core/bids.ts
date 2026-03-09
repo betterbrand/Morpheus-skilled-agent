@@ -35,8 +35,7 @@ export async function adjustBid(
 
   // Find our current bid for this model
   const raw = await client.get<{ bids: BidResponse[] } | BidResponse[]>(
-    `/blockchain/bids`,
-    { modelId: params.modelId }
+    `/blockchain/models/${params.modelId}/bids`
   );
   const bids = Array.isArray(raw) ? raw : (raw as { bids: BidResponse[] }).bids ?? [];
   const myBid = bids.find(

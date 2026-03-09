@@ -12,7 +12,7 @@ const ALLOWED_ENDPOINTS: Array<[string, string]> = [
   ["GET", "/healthcheck"],
   ["GET", "/blockchain/balance"],
   ["GET", "/blockchain/latestBlock"],
-  ["GET", "/blockchain/models"],
+  ["GET", "/blockchain/models"],   // covers /blockchain/models and /blockchain/models/{id}/bids
   ["GET", "/blockchain/bids"],
   ["GET", "/blockchain/providers"],
   ["GET", "/blockchain/sessions"],
