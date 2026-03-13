@@ -4,6 +4,69 @@ A portable Node.js/TypeScript tool for managing a [Morpheus Lumerin](https://mor
 
 ---
 
+## Architecture
+
+```mermaid
+flowchart TB
+    subgraph interfaces["Interfaces"]
+        CLI["CLI\nmorpheus-node-manager"]
+        MCP["MCP Server\nmorpheus-node-manager-mcp"]
+        OAI["OpenAI Tools\ntools + handleToolCall()"]
+    end
+
+    subgraph agents["AI Agents"]
+        CC["Claude Code"]
+        CLINE["Cline / Continue.dev"]
+        AGENT["Any OpenAI-compatible agent"]
+    end
+
+    subgraph core["Core Layer (src/core/)"]
+        CLIENT["client.ts\nHTTP + endpoint allowlist"]
+        HEALTH["health.ts\ntwo-stage health check"]
+        MODELS["models.ts\nlist / add / remove"]
+        BIDS["bids.ts\nadjust bid"]
+        EARN["earnings.ts\nclaim sessions"]
+        PROV["provider.ts\nbalances + BigInt wei"]
+    end
+
+    subgraph opsagent["Ops Agent (Docker)"]
+        LOOP["agent.ts\n5-min monitoring loop"]
+        AUDIT["audit.ts\nappend-only log"]
+        ALERTS["alerts.ts\nTelegram / Slack webhook"]
+    end
+
+    subgraph hetzner["Hetzner VPS 5.161.177.217"]
+        ROUTER["morpheus-router\nproxy-router process\n:3333 inference  :8082 API"]
+    end
+
+    subgraph backends["Inference Backends"]
+        VENICE["Venice AI\nGLM-5, Kimi K2.5"]
+        AKASH["AkashChat\nOpenRouter\nOllama ..."]
+    end
+
+    subgraph chain["Arbitrum Mainnet"]
+        MARKET["Morpheus Marketplace\nbids · sessions · MOR payments"]
+    end
+
+    CC --> MCP
+    CLINE --> MCP
+    AGENT --> OAI
+    CLI --> core
+    MCP --> core
+    OAI --> core
+    core --> CLIENT
+    CLIENT -->|"REST API\nbasic auth"| ROUTER
+    ROUTER -->|"OpenAI-compatible"| VENICE
+    ROUTER -->|"OpenAI-compatible"| AKASH
+    ROUTER <-->|"Arbitrum RPC\nbids · sessions · claims"| MARKET
+    LOOP --> core
+    LOOP --> AUDIT
+    LOOP --> ALERTS
+    LOOP -->|"systemctl restart"| ROUTER
+```
+
+---
+
 ## Quick start
 
 ```bash
