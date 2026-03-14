@@ -86,6 +86,23 @@ const routes: MockRoute[] = [
       ],
     },
   },
+  // Per-model bids endpoint (used by enrichModel)
+  {
+    method: "GET", path: "/blockchain/models/0xmodel1aabbccdd/bids",
+    response: {
+      bids: [
+        {
+          Id: "0xbid1aabbccdd",
+          ModelAgentId: "0xmodel1aabbccdd",
+          Provider: "0xa2c397849325605d8a7b08629f173540a9f1ac41",
+          PricePerSecond: "10000000000",
+          Nonce: "0",
+          CreatedAt: "1772837215",
+          DeletedAt: "0",
+        },
+      ],
+    },
+  },
   // Active bids endpoint also wraps
   {
     method: "GET", path: "/blockchain/providers/0xa2c397849325605d8a7b08629f173540a9f1ac41/bids/active",
@@ -118,6 +135,10 @@ const routes: MockRoute[] = [
   },
   {
     method: "DELETE", path: "/blockchain/bids/0xbid1aabbccdd",
+    response: {}, status: 200,
+  },
+  {
+    method: "DELETE", path: "/blockchain/models/0xmodel1aabbccdd",
     response: {}, status: 200,
   },
 ];
