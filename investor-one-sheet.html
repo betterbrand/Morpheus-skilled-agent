@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morpheus Node Manager - Investor One-Sheet</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green: #00D632;
+    --green-dim: rgba(0, 214, 50, 0.10);
+    --green-glow: rgba(0, 214, 50, 0.25);
+    --green-border: rgba(0, 214, 50, 0.15);
+    --red-dim: rgba(239, 68, 68, 0.10);
+    --red-accent: #F87171;
+    --red-border: rgba(239, 68, 68, 0.15);
+    --bg: #07080D;
+    --surface: #111118;
+    --surface-2: #17171F;
+    --border: rgba(255, 255, 255, 0.06);
+    --text: #F5F5F7;
+    --text-dim: #9CA3AF;
+    --text-muted: #6B7280;
+  }
+
+  @page { size: letter; margin: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    margin: 0 auto;
+    padding: 0.5in 0.55in 0.4in;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  .page::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--green) 25%, var(--green) 75%, transparent 100%);
+    opacity: 0.7;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.24in;
+    padding-bottom: 0.16in;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-left { display: flex; flex-direction: column; gap: 10px; }
+
+  .logo-group { display: flex; align-items: center; gap: 12px; }
+
+  .logo-mark {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--green) 0%, #00A828 100%);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 24px var(--green-glow);
+  }
+  .logo-mark svg { width: 22px; height: 22px; }
+
+  .logo-text h1 {
+    font-size: 21px; font-weight: 700; letter-spacing: -0.4px;
+    color: var(--text);
+  }
+  .logo-text .subtitle {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-muted); margin-top: 1px;
+  }
+
+  .tagline {
+    font-size: 22px; font-weight: 300; letter-spacing: -0.3px;
+    color: var(--text-dim); line-height: 1.35; max-width: 4.8in;
+  }
+  .tagline strong { color: var(--text); font-weight: 600; }
+  .tagline em { color: var(--green); font-style: normal; font-weight: 500; }
+
+  .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; padding-top: 2px; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 100px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .badge--green {
+    background: var(--green-dim); color: var(--green);
+    border: 1px solid var(--green-border);
+  }
+  .badge--neutral {
+    background: rgba(255,255,255,0.03); color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+  .badge-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+  /* Problem / Solution */
+  .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 0.18in; margin-bottom: 0.18in; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.18in 0.2in;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  }
+  .card--problem::before { background: linear-gradient(90deg, transparent, rgba(239,68,68,0.4), transparent); }
+  .card--solution::before { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+  .card--solution {
+    border-color: rgba(0,214,50,0.08);
+    background: linear-gradient(180deg, rgba(0,214,50,0.02) 0%, var(--surface) 100%);
+  }
+
+  .card h3 {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.4px; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card h3::after {
+    content: ''; flex: 1; height: 1px;
+  }
+  .card--problem h3 { color: var(--red-accent); }
+  .card--problem h3::after { background: linear-gradient(90deg, rgba(239,68,68,0.25), transparent); }
+  .card--solution h3 { color: var(--green); }
+  .card--solution h3::after { background: linear-gradient(90deg, var(--green-border), transparent); }
+
+  .card h4 {
+    font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text);
+    line-height: 1.4;
+  }
+  .card p, .card li {
+    font-size: 10.5px; color: var(--text-dim); line-height: 1.55;
+  }
+  .card ul { list-style: none; padding: 0; margin-top: 4px; }
+  .card ul li { padding-left: 16px; position: relative; margin-bottom: 3px; }
+
+  .card--problem ul li::before {
+    content: ''; position: absolute; left: 0; top: 6px;
+    width: 5px; height: 5px; border-radius: 1px;
+    background: rgba(239,68,68,0.45); transform: rotate(45deg);
+  }
+  .card--solution ul li::before {
+    content: ''; position: absolute; left: 0; top: 5px;
+    width: 7px; height: 4px;
+    border-left: 1.5px solid var(--green);
+    border-bottom: 1.5px solid var(--green);
+    transform: rotate(-45deg);
+  }
+
+  /* Features */
+  .features {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.12in;
+    margin-bottom: 0.18in;
+  }
+  .feature {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.14in 0.13in;
+    text-align: center;
+  }
+  .feature-icon {
+    width: 34px; height: 34px; margin: 0 auto 6px;
+    border-radius: 8px;
+    background: var(--green-dim);
+    border: 1px solid rgba(0,214,50,0.08);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .feature-icon svg {
+    width: 18px; height: 18px;
+    stroke: var(--green); fill: none;
+    stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .feature h4 { font-size: 11px; font-weight: 700; margin-bottom: 3px; letter-spacing: -0.1px; }
+  .feature p { font-size: 9.5px; color: var(--text-dim); line-height: 1.45; }
+
+  /* Architecture */
+  .arch-section { margin-bottom: 0.18in; }
+  .section-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.4px; color: var(--green); margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--green-border), transparent);
+  }
+
+  .arch-flow {
+    display: flex; align-items: center; justify-content: center;
+    gap: 0; padding: 0.12in 0.1in;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .arch-node { text-align: center; padding: 5px 10px; min-width: 100px; }
+  .arch-node .label {
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--text);
+    padding: 3px 8px; border-radius: 4px; display: inline-block;
+  }
+  .arch-node .sub { font-size: 8px; color: var(--text-muted); margin-top: 2px; }
+
+  .arch-node--agent .label { background: rgba(139,92,246,0.12); color: #A78BFA; }
+  .arch-node--core .label { background: var(--green-dim); color: var(--green); }
+  .arch-node--infra .label { background: rgba(251,146,60,0.12); color: #FB923C; }
+  .arch-node--chain .label { background: rgba(244,114,182,0.12); color: #F472B6; }
+
+  .arch-arrow { color: var(--text-muted); font-size: 14px; margin: 0 2px; flex-shrink: 0; opacity: 0.5; }
+
+  /* Stats */
+  .stats {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 0.1in; margin-bottom: 0.18in;
+  }
+  .stat {
+    text-align: center;
+    padding: 0.09in 0.06in;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .stat .number {
+    font-size: 20px; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--green) 0%, #A7F3D0 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat .label {
+    font-size: 8px; color: var(--text-muted); margin-top: 1px;
+    text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600;
+  }
+
+  /* Integrations bar */
+  .integrations {
+    margin-bottom: 0.18in;
+    padding: 0.09in 0.18in;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    display: flex; align-items: center; gap: 16px;
+  }
+  .integrations-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-muted);
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .integrations-divider {
+    width: 1px; height: 18px; background: var(--border); flex-shrink: 0;
+  }
+  .integrations-list { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .integration-item {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 10px; font-weight: 500; color: var(--text-dim);
+  }
+  .int-dot {
+    width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  }
+  .int-dot--purple { background: #A78BFA; }
+  .int-dot--blue { background: #60A5FA; }
+  .int-dot--emerald { background: #34D399; }
+  .int-dot--orange { background: #FB923C; }
+  .int-dot--pink { background: #F472B6; }
+  .int-dot--cyan { background: #22D3EE; }
+
+  /* Bottom columns */
+  .card p { line-height: 1.5; }
+
+  /* Footer */
+  .footer {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    padding-top: 0.12in;
+    border-top: 1px solid var(--border);
+  }
+  .footer-left p { font-size: 9px; color: var(--text-muted); line-height: 1.6; }
+  .footer-left a { color: var(--green); text-decoration: none; }
+  .footer-right { text-align: right; }
+
+  .footer-cta {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 16px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--green) 0%, #00A828 100%);
+    color: #000; font-size: 11px; font-weight: 700;
+    text-decoration: none; letter-spacing: 0.01em;
+    box-shadow: 0 0 20px var(--green-glow);
+  }
+  .footer-cta svg { width: 12px; height: 12px; }
+  .footer-date { font-size: 9px; color: var(--text-muted); margin-top: 4px; }
+
+  @media print {
+    body { background: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page { margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo-group">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1>Morpheus Node Manager</h1>
+          <div class="subtitle">Decentralized AI Infrastructure</div>
+        </div>
+      </div>
+      <div class="tagline">
+        <strong>Terraform for decentralized AI nodes.</strong><br>
+        Provision, monitor, and earn from <em>AI inference</em> on the Morpheus network.
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="badge badge--green"><span class="badge-dot"></span>Live on Arbitrum Mainnet</span>
+      <span class="badge badge--neutral">Open Source</span>
+    </div>
+  </header>
+
+  <!-- Problem / Solution -->
+  <div class="columns">
+    <div class="card card--problem">
+      <h3>The Problem</h3>
+      <h4>Running AI inference nodes is operationally brutal and doesn't scale.</h4>
+      <ul>
+        <li>Manual health monitoring with no auto-recovery when nodes crash</li>
+        <li>MOR earnings sit unclaimed in smart contracts, losing yield</li>
+        <li>Bid management requires direct blockchain interaction</li>
+        <li>No standard interface for AI agents to manage infrastructure</li>
+        <li>Raw proxy-router API exposure creates security risk</li>
+      </ul>
+    </div>
+    <div class="card card--solution">
+      <h3>The Solution</h3>
+      <h4>Autonomous node ops with safety-first automation and universal agent compatibility.</h4>
+      <ul>
+        <li><strong>8 composable tools</strong> covering full provider lifecycle</li>
+        <li><strong>3 interfaces</strong>: CLI, MCP server (Claude/Cline), OpenAI function-calling</li>
+        <li><strong>Self-healing ops agent</strong> with circuit breakers, auto-claim, webhooks</li>
+        <li><strong>Endpoint allowlist</strong> blocks fund transfers and wallet operations</li>
+        <li><strong>One npm install</strong>, zero config to start earning</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 8h2m2 0h2m2 0h2"/></svg>
+      </div>
+      <h4>Agent-Native</h4>
+      <p>MCP server for Claude Code, Cline, Continue.dev. OpenAI tools schema for any LLM agent.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+      </div>
+      <h4>Self-Healing Ops</h4>
+      <p>5-min monitoring loop. Auto-restarts nodes, claims earnings, alerts on low balances via Slack or Telegram.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+      </div>
+      <h4>Security-First</h4>
+      <p>Endpoint allowlist blocks dangerous ops. SSRF guard, atomic locks, HTTPS enforcement, confirmation tokens.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      </div>
+      <h4>Revenue Engine</h4>
+      <p>Auto-claim MOR from sessions. Dynamic bid adjustment. Dry-run mode for risk-free earnings inspection.</p>
+    </div>
+  </div>
+
+  <!-- Architecture -->
+  <div class="arch-section">
+    <div class="section-label">Architecture</div>
+    <div class="arch-flow">
+      <div class="arch-node arch-node--agent">
+        <div class="label">AI Agents</div>
+        <div class="sub">Claude, GPT, Cline</div>
+      </div>
+      <div class="arch-arrow">&rarr;</div>
+      <div class="arch-node arch-node--core">
+        <div class="label">Node Manager</div>
+        <div class="sub">CLI / MCP / OpenAI</div>
+      </div>
+      <div class="arch-arrow">&rarr;</div>
+      <div class="arch-node arch-node--infra">
+        <div class="label">Proxy-Router</div>
+        <div class="sub">Provider node</div>
+      </div>
+      <div class="arch-arrow">&rarr;</div>
+      <div class="arch-node arch-node--infra">
+        <div class="label">Inference</div>
+        <div class="sub">Venice, Akash, Ollama</div>
+      </div>
+      <div class="arch-arrow">&harr;</div>
+      <div class="arch-node arch-node--chain">
+        <div class="label">Arbitrum</div>
+        <div class="sub">MOR staking &amp; payments</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="number">8</div><div class="label">Provider Tools</div></div>
+    <div class="stat"><div class="number">3</div><div class="label">Interfaces</div></div>
+    <div class="stat"><div class="number">8+</div><div class="label">Backends</div></div>
+    <div class="stat"><div class="number">21</div><div class="label">Security Tests</div></div>
+    <div class="stat"><div class="number">24/7</div><div class="label">Autonomous Ops</div></div>
+  </div>
+
+  <!-- Integrations -->
+  <div class="integrations">
+    <div class="integrations-label">Works With</div>
+    <div class="integrations-divider"></div>
+    <div class="integrations-list">
+      <div class="integration-item"><div class="int-dot int-dot--purple"></div>Claude Code</div>
+      <div class="integration-item"><div class="int-dot int-dot--blue"></div>Cline</div>
+      <div class="integration-item"><div class="int-dot int-dot--emerald"></div>Continue.dev</div>
+      <div class="integration-item"><div class="int-dot int-dot--orange"></div>OpenCode</div>
+      <div class="integration-item"><div class="int-dot int-dot--pink"></div>Any OpenAI Agent</div>
+      <div class="integration-item"><div class="int-dot int-dot--cyan"></div>Docker / systemd</div>
+    </div>
+  </div>
+
+  <!-- Why Now / Business Model -->
+  <div class="columns">
+    <div class="card">
+      <h3 style="color: var(--green);">Why Now</h3>
+      <p>The convergence of AI agents and Web3 creates a new category: <strong>autonomous AI-managed revenue infrastructure</strong>. As agents gain tool-use capabilities, they need standardized interfaces to manage on-chain operations. Morpheus Node Manager is the first tool purpose-built for AI agents to operate decentralized inference nodes &mdash; turning every AI coding assistant into a node operator.</p>
+    </div>
+    <div class="card">
+      <h3 style="color: var(--green);">Business Model</h3>
+      <ul>
+        <li><strong>Provider revenue share</strong> &mdash; MOR token earnings flow through managed nodes</li>
+        <li><strong>Managed node services</strong> &mdash; ops agent enables turnkey "run a node" offerings</li>
+        <li><strong>Protocol integrations</strong> &mdash; guides for 10+ platforms (LibreChat, Flowise, Zapier, GenLayer)</li>
+        <li><strong>Open source adoption</strong> &mdash; npm + Docker drives ecosystem growth</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-left">
+      <p><strong>Better Brand</strong> &middot; <a href="https://github.com/betterbrand">github.com/betterbrand</a></p>
+      <p>Node.js / TypeScript &middot; npm + Docker</p>
+    </div>
+    <div class="footer-right">
+      <a href="https://github.com/betterbrand/Morpheus-skilled-agent" class="footer-cta">
+        View on GitHub
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+      <div class="footer-date">Morpheus Node Manager v1.0 &middot; March 2026</div>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

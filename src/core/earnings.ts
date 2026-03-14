@@ -116,11 +116,13 @@ export async function claimEarnings(
       });
       claimCount++;
     } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      const truncated = errMsg.length > 200 ? errMsg.slice(0, 200) + "..." : errMsg;
       results.push({
         sessionId: session.Id,
         claimableWei,
         claimableFormatted: morToFormatted(claimableWei),
-        skipped: `claim_failed: ${err instanceof Error ? err.message : String(err)}`,
+        skipped: `claim_failed: ${truncated}`,
       });
     }
   }

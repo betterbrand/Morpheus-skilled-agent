@@ -23,27 +23,43 @@ const runOnce = values.once === true;
 const config = loadOpsConfig(configPath);
 const lockFile = config.lockFile!;
 
-// --- Lockfile concurrency guard ---
+// --- Lockfile concurrency guard (atomic via O_EXCL — no TOCTOU race) ---
 function acquireLock(): boolean {
-  if (existsSync(lockFile)) {
-    const pid = readFileSync(lockFile, "utf-8").trim();
-    // Check if that PID is still running
+  try {
+    // O_EXCL: fail if file exists — atomic, no TOCTOU
+    // Write pid:timestamp to detect PID reuse on stale lock check
+    writeFileSync(lockFile, `${process.pid}:${Date.now()}`, { flag: "wx", mode: 0o600, encoding: "utf-8" });
+    return true;
+  } catch (err: any) {
+    if (err.code !== "EEXIST") {
+      console.error("[ops-agent] Failed to acquire lockfile:", err.message);
+      return false;
+    }
+    // File exists — check if holder is still alive
     try {
-      process.kill(parseInt(pid, 10), 0); // signal 0 = existence check
+      const content = readFileSync(lockFile, "utf-8").trim();
+      const [pidStr, tsStr] = content.split(":");
+      const pid = parseInt(pidStr, 10);
+      const lockTs = parseInt(tsStr, 10);
+      process.kill(pid, 0); // signal 0 = existence check
+      // If lock is older than 24h, treat as stale even if PID exists (PID reuse)
+      if (lockTs && Date.now() - lockTs > 86_400_000) {
+        throw new Error("lock too old, likely PID reuse");
+      }
       console.error(`[ops-agent] Another instance is running (PID ${pid}). Exiting.`);
       return false;
     } catch {
-      // Process doesn't exist — stale lockfile, remove it
-      console.error(`[ops-agent] Removing stale lockfile for PID ${pid}`);
+      // Stale lock — remove and retry once
+      console.error("[ops-agent] Removing stale lockfile.");
       unlinkSync(lockFile);
+      try {
+        writeFileSync(lockFile, `${process.pid}:${Date.now()}`, { flag: "wx", mode: 0o600, encoding: "utf-8" });
+        return true;
+      } catch {
+        console.error("[ops-agent] Failed to acquire lockfile after stale lock removal.");
+        return false;
+      }
     }
-  }
-  try {
-    writeFileSync(lockFile, String(process.pid), { mode: 0o600, encoding: "utf-8" });
-    return true;
-  } catch (err) {
-    console.error("[ops-agent] Failed to acquire lockfile:", err instanceof Error ? err.message : err);
-    return false;
   }
 }
 

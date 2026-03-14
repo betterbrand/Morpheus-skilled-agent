@@ -25,8 +25,10 @@ function readCookieFile(cookiePath: string): string | undefined {
   try {
     const content = readFileSync(cookiePath, "utf-8").trim();
     // Cookie file may be "user:password" or just the password
-    if (content.includes(":")) {
-      return content.split(":")[1];
+    // Use indexOf+slice instead of split to preserve colons in passwords
+    const idx = content.indexOf(":");
+    if (idx !== -1) {
+      return content.slice(idx + 1);
     }
     return content;
   } catch {

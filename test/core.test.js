@@ -55,6 +55,20 @@ const routes = [
     },
   },
   {
+    method: "GET", path: "/blockchain/models/0xmodel1aabbccdd/bids",
+    response: {
+      bids: [{
+        Id: "0xbid1aabbccdd",
+        ModelAgentId: "0xmodel1aabbccdd",
+        Provider: "0xa2c397849325605d8a7b08629f173540a9f1ac41",
+        PricePerSecond: "10000000000",
+        Nonce: "0",
+        CreatedAt: "1772837215",
+        DeletedAt: "0",
+      }],
+    },
+  },
+  {
     method: "GET", path: "/blockchain/providers/0xa2c397849325605d8a7b08629f173540a9f1ac41/bids/active",
     response: {
       bids: [{

@@ -190,16 +190,23 @@ export async function handleToolCall(
         2
       );
 
-    case "claim_earnings":
+    case "claim_earnings": {
+      const maxClaims = typeof args.maxClaims === "number" && Number.isInteger(args.maxClaims) && args.maxClaims > 0
+        ? args.maxClaims : 10;
+      const minWei = args.minClaimableWei ? String(args.minClaimableWei) : "0";
+      if (!/^\d+$/.test(minWei)) {
+        throw new Error("minClaimableWei must be a non-negative integer string");
+      }
       return JSON.stringify(
         await claimEarnings(client, {
           doClaim: args.doClaim !== false,
-          maxClaims: typeof args.maxClaims === "number" ? args.maxClaims : 10,
-          minClaimableWei: args.minClaimableWei ? String(args.minClaimableWei) : "0",
+          maxClaims,
+          minClaimableWei: minWei,
         }),
         null,
         2
       );
+    }
 
     case "check_balances":
       return JSON.stringify(await checkBalances(client), null, 2);
