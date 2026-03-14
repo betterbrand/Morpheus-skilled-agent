@@ -131,6 +131,13 @@ async function main(): Promise<void> {
     "min-claimable": str(rawValues["min-claimable"]),
   };
 
+  if (values.password) {
+    console.warn(
+      "[cli] Warning: --password exposes credentials in the process table. " +
+        "Prefer MORPHEUS_API_PASSWORD env var or --cookie for the .cookie file path."
+    );
+  }
+
   const config = loadConfig({
     url: values.url,
     user: values.user,
@@ -210,10 +217,20 @@ async function main(): Promise<void> {
       }
 
       case "claim": {
+        const maxClaims = values["max-claims"] ? parseInt(values["max-claims"], 10) : 10;
+        if (Number.isNaN(maxClaims) || maxClaims <= 0) {
+          console.error("--max-claims must be a positive integer");
+          process.exit(1);
+        }
+        const minClaimable = values["min-claimable"] ?? "0";
+        if (!/^\d+$/.test(minClaimable)) {
+          console.error("--min-claimable must be a non-negative integer (wei)");
+          process.exit(1);
+        }
         const result = await claimEarnings(client, {
           doClaim: !values["dry-run"],
-          maxClaims: values["max-claims"] ? parseInt(values["max-claims"], 10) : 10,
-          minClaimableWei: values["min-claimable"] ?? "0",
+          maxClaims,
+          minClaimableWei: minClaimable,
         });
         console.log(JSON.stringify(result, null, 2));
         break;

@@ -7,23 +7,24 @@ import type { Config } from "./types.js";
 const DEFAULT_TIMEOUT_MS = 10_000;
 
 // Paths that are ALLOWED. Everything else is blocked.
-// Structured as [method, pathPrefix | exact].
-const ALLOWED_ENDPOINTS: Array<[string, string]> = [
-  ["GET", "/healthcheck"],
-  ["GET", "/blockchain/balance"],
-  ["GET", "/blockchain/latestBlock"],
-  ["GET", "/blockchain/models"],   // covers /blockchain/models and /blockchain/models/{id}/bids
-  ["GET", "/blockchain/bids"],
-  ["GET", "/blockchain/providers"],
-  ["GET", "/blockchain/sessions"],
-  ["GET", "/blockchain/token"],
-  ["GET", "/proxy/sessions"],
-  ["GET", "/wallet"],
-  ["POST", "/blockchain/models"],
-  ["POST", "/blockchain/bids"],
-  ["POST", "/proxy/sessions"],
-  ["DELETE", "/blockchain/bids"],
-  ["DELETE", "/blockchain/models"],
+// "exact" = only this exact path. "prefix" = this path and any sub-paths (path + "/...").
+type AllowMode = "exact" | "prefix";
+const ALLOWED_ENDPOINTS: Array<[string, string, AllowMode]> = [
+  ["GET", "/healthcheck", "exact"],
+  ["GET", "/blockchain/balance", "exact"],
+  ["GET", "/blockchain/latestBlock", "exact"],
+  ["GET", "/blockchain/models", "prefix"],   // covers /blockchain/models and /blockchain/models/{id}/bids
+  ["GET", "/blockchain/bids", "prefix"],
+  ["GET", "/blockchain/providers", "prefix"],  // covers /blockchain/providers and /{addr}/bids/active
+  ["GET", "/blockchain/sessions", "exact"],
+  ["GET", "/blockchain/token", "exact"],
+  ["GET", "/proxy/sessions", "prefix"],       // covers /proxy/sessions/{id}/providerClaimableBalance
+  ["GET", "/wallet", "exact"],
+  ["POST", "/blockchain/models", "exact"],
+  ["POST", "/blockchain/bids", "exact"],
+  ["POST", "/proxy/sessions", "prefix"],      // covers /proxy/sessions/{id}/providerClaim
+  ["DELETE", "/blockchain/bids", "prefix"],    // covers /blockchain/bids/{id}
+  ["DELETE", "/blockchain/models", "prefix"],  // covers /blockchain/models/{id}
 ];
 
 // Explicitly blocked paths (belt-and-suspenders — checked even if allowlist fails)
@@ -36,7 +37,7 @@ const BLOCKED_PATH_PREFIXES = [
 ];
 
 const BLOCKED_EXACT_PATHS = [
-  "/wallet", // DELETE /wallet — removes wallet entirely
+  "/wallet", // DELETE/POST/PUT /wallet — removes or replaces wallet entirely
 ];
 
 function checkAllowlist(method: string, path: string): void {
@@ -48,14 +49,18 @@ function checkAllowlist(method: string, path: string): void {
       throw new Error(`[client] Blocked endpoint: ${m} ${path} — irreversible or dangerous operation`);
     }
   }
-  if (m === "DELETE" && BLOCKED_EXACT_PATHS.includes(path)) {
-    throw new Error(`[client] Blocked endpoint: ${m} ${path} — would remove the wallet`);
+  if ((m === "DELETE" || m === "POST" || m === "PUT") && BLOCKED_EXACT_PATHS.includes(path)) {
+    throw new Error(`[client] Blocked endpoint: ${m} ${path} — would remove or replace the wallet`);
   }
 
-  // Allowlist check
+  // Allowlist check — "exact" entries match only the literal path,
+  // "prefix" entries also match sub-paths (path + "/...")
   const allowed = ALLOWED_ENDPOINTS.some(
-    ([allowedMethod, allowedPath]) =>
-      m === allowedMethod && path.startsWith(allowedPath)
+    ([allowedMethod, allowedPath, mode]) => {
+      if (m !== allowedMethod) return false;
+      if (path === allowedPath) return true;
+      return mode === "prefix" && path.startsWith(allowedPath + "/");
+    }
   );
 
   if (!allowed) {
@@ -102,7 +107,8 @@ export class MorpheusClient {
       clearTimeout(timer);
       if (!res.ok) {
         const body = await res.text().catch(() => "");
-        throw new Error(`HTTP ${res.status} ${res.statusText}: ${body}`);
+        const truncated = body.length > 200 ? body.slice(0, 200) + "..." : body;
+        throw new Error(`HTTP ${res.status} ${res.statusText}: ${truncated}`);
       }
       return res.json() as Promise<T>;
     } catch (err) {
@@ -128,7 +134,8 @@ export class MorpheusClient {
       clearTimeout(timer);
       if (!res.ok) {
         const text = await res.text().catch(() => "");
-        throw new Error(`HTTP ${res.status} ${res.statusText}: ${text}`);
+        const truncated = text.length > 200 ? text.slice(0, 200) + "..." : text;
+        throw new Error(`HTTP ${res.status} ${res.statusText}: ${truncated}`);
       }
       return res.json() as Promise<T>;
     } catch (err) {
@@ -153,7 +160,8 @@ export class MorpheusClient {
       clearTimeout(timer);
       if (!res.ok) {
         const text = await res.text().catch(() => "");
-        throw new Error(`HTTP ${res.status} ${res.statusText}: ${text}`);
+        const truncated = text.length > 200 ? text.slice(0, 200) + "..." : text;
+        throw new Error(`HTTP ${res.status} ${res.statusText}: ${truncated}`);
       }
       // Some DELETE endpoints return 204 No Content
       const contentType = res.headers.get("content-type") ?? "";

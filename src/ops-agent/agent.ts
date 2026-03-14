@@ -23,11 +23,42 @@ const DEFAULT_STATE: OpsState = {
   lastCheckAt: 0,
 };
 
+/** Filter lastClaimedAt: keep only entries with reasonable unix timestamp values */
+function sanitizeClaimedAt(obj: Record<string, number>): Record<string, number> {
+  const now = Math.floor(Date.now() / 1000) + 60; // allow 60s clock skew
+  const result: Record<string, number> = {};
+  for (const [key, val] of Object.entries(obj)) {
+    if (typeof val === "number" && val > 0 && val <= now) {
+      result[key] = val;
+    }
+  }
+  return result;
+}
+
+/** Validate and clamp parsed state fields to prevent tampered state from disabling circuit breakers */
+function sanitizeState(raw: Partial<OpsState>): OpsState {
+  return {
+    lastClaimedAt:
+      raw.lastClaimedAt && typeof raw.lastClaimedAt === "object" && !Array.isArray(raw.lastClaimedAt)
+        ? sanitizeClaimedAt(raw.lastClaimedAt)
+        : {},
+    consecutiveRestarts: Math.max(
+      0,
+      Math.min(Number.isInteger(raw.consecutiveRestarts) ? raw.consecutiveRestarts! : 0, 1000)
+    ),
+    consecutiveHealthyChecks: Math.max(
+      0,
+      Number.isInteger(raw.consecutiveHealthyChecks) ? raw.consecutiveHealthyChecks! : 0
+    ),
+    lastCheckAt: typeof raw.lastCheckAt === "number" ? raw.lastCheckAt : 0,
+  };
+}
+
 function loadState(path: string): OpsState {
   try {
     if (!existsSync(path)) return { ...DEFAULT_STATE };
     const raw = readFileSync(path, "utf-8");
-    return { ...DEFAULT_STATE, ...(JSON.parse(raw) as Partial<OpsState>) };
+    return sanitizeState(JSON.parse(raw) as Partial<OpsState>);
   } catch {
     return { ...DEFAULT_STATE };
   }

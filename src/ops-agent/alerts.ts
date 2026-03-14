@@ -49,12 +49,41 @@ function genericPayload(msg: AlertMessage): Record<string, unknown> {
   };
 }
 
+/** Validate webhook URL: must be HTTPS, must not target private/local hosts (SSRF prevention) */
+function validateWebhookUrl(url: string): void {
+  let parsed: URL;
+  try { parsed = new URL(url); } catch {
+    throw new Error(`[alerts] Invalid webhook URL: ${url}`);
+  }
+  if (parsed.protocol !== "https:") {
+    throw new Error(`[alerts] Webhook URL must use https:// (got ${parsed.protocol})`);
+  }
+  const h = parsed.hostname.toLowerCase();
+  const isPrivate =
+    h === "localhost" || h === "127.0.0.1" || h === "::1" || h === "0.0.0.0" ||
+    /^10\./.test(h) || /^172\.(1[6-9]|2\d|3[01])\./.test(h) || /^192\.168\./.test(h) ||
+    /^169\.254\./.test(h) ||              // link-local IPv4 (includes AWS metadata 169.254.169.254)
+    h === "metadata.google.internal" ||   // GCP metadata
+    h === "168.63.129.16" ||              // Azure metadata
+    /^fe80:/i.test(h) ||                  // IPv6 link-local
+    /^f[cd][0-9a-f]{2}:/i.test(h) ||     // IPv6 ULA (fc00::/7)
+    /^::ffff:/i.test(h);                  // IPv4-mapped IPv6
+  if (isPrivate) {
+    throw new Error(`[alerts] Webhook URL must not point to private/local hosts: ${h}`);
+  }
+}
+
 /** Send an alert via webhook. Returns true on success, false on failure. */
 export async function sendAlert(
   config: AlertConfig,
   msg: AlertMessage
 ): Promise<boolean> {
   if (!config.webhookUrl) return false;
+
+  try { validateWebhookUrl(config.webhookUrl); } catch (err) {
+    console.error("[alerts]", err instanceof Error ? err.message : err);
+    return false;
+  }
 
   let payload: Record<string, unknown>;
   let url = config.webhookUrl;

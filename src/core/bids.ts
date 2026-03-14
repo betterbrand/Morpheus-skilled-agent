@@ -27,10 +27,18 @@ export interface AdjustBidResult {
  *
  * Strategy: Prepare all params before deleting, then POST immediately after DELETE.
  */
+function validateWei(value: string, name: string): void {
+  if (!/^\d+$/.test(value)) {
+    throw new Error(`Invalid ${name}: expected a non-negative integer string (got "${value}")`);
+  }
+}
+
 export async function adjustBid(
   client: MorpheusClient,
   params: AdjustBidParams
 ): Promise<AdjustBidResult> {
+  validateWei(params.newPricePerSecondWei, "newPricePerSecondWei");
+
   const address = await client.getWalletAddress();
 
   // Find our current bid for this model

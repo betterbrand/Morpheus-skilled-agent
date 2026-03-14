@@ -86,11 +86,20 @@ export interface AddModelParams {
   modelName?: string;
 }
 
+function validateWei(value: string, name: string): void {
+  if (!/^\d+$/.test(value)) {
+    throw new Error(`Invalid ${name}: expected a non-negative integer string (got "${value}")`);
+  }
+}
+
 /** Register a model on the Morpheus marketplace and post an opening bid */
 export async function addModel(
   client: MorpheusClient,
   params: AddModelParams
 ): Promise<{ modelId: string; bidId: string }> {
+  validateWei(params.stakeWei, "stakeWei");
+  validateWei(params.pricePerSecondWei, "pricePerSecondWei");
+
   // POST /blockchain/models — registers model on-chain
   const modelRes = await client.post<{ id: string }>("/blockchain/models", {
     ipfsCID: params.ipfsCID,

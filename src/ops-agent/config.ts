@@ -1,6 +1,6 @@
 // ops-agent/config.ts — ops agent config loader with circuit breaker defaults
 
-import { readFileSync, existsSync } from "fs";
+import { readFileSync, existsSync, statSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
 import type { OpsConfig } from "../core/types.js";
@@ -37,6 +37,15 @@ const DEFAULTS: OpsConfig = {
 export function loadOpsConfig(configPath: string): OpsConfig {
   if (!existsSync(configPath)) {
     throw new Error(`Config file not found: ${configPath}. Copy templates/config.example.json and edit it.`);
+  }
+
+  const stat = statSync(configPath);
+  const mode = stat.mode & 0o777;
+  if (mode & 0o077) {
+    throw new Error(
+      `[ops-agent] Config file ${configPath} is readable by group/other (mode ${mode.toString(8)}). ` +
+        "This file may contain API credentials. Fix with: chmod 600 " + configPath
+    );
   }
 
   const raw = readFileSync(configPath, "utf-8");
