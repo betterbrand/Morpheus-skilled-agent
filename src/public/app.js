@@ -75,7 +75,7 @@
     if (morUsdPrice === null || !morAmount) return '';
     var usd = parseFloat(morAmount) * morUsdPrice;
     if (isNaN(usd) || usd === 0) return '';
-    if (usd < 0.01) return ' (~$' + usd.toFixed(6) + ')';
+    if (usd < 0.01) return ' (<$0.01)';
     return ' (~$' + usd.toFixed(2) + ')';
   }
 
