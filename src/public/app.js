@@ -727,6 +727,12 @@
       if (currentPage < totalPages) { currentPage++; renderFilteredModels(); }
     });
 
+    $('toggle-models-info').addEventListener('click', function () {
+      var panel = $('models-info-panel');
+      panel.classList.toggle('collapsed');
+      this.textContent = panel.classList.contains('collapsed') ? '?' : 'X';
+    });
+
     $('toggle-add-model').addEventListener('click', toggleAddModelForm);
     $('cancel-add-model').addEventListener('click', toggleAddModelForm);
     $('submit-add-model').addEventListener('click', submitAddModel);

@@ -619,6 +619,40 @@ body::after {
 .field-value.status-registered { color: var(--success); }
 .field-value.status-unregistered { color: var(--error); }
 
+/* --- Info Panel --- */
+.info-panel {
+  padding: var(--sp-4) var(--sp-5);
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  max-height: 300px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height var(--t-smooth), opacity var(--t-smooth), padding var(--t-smooth);
+}
+
+.info-panel.collapsed {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.info-panel p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--sp-2);
+}
+
+.info-panel p:last-child {
+  margin-bottom: 0;
+}
+
+.info-panel strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+
 /* --- Filter Toggle --- */
 .card-header-actions {
   display: flex;

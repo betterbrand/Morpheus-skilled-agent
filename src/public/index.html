@@ -135,8 +135,17 @@
             <button class="filter-btn active" data-filter="mine">My Models</button>
             <button class="filter-btn" data-filter="all">All Models</button>
           </div>
+          <button class="btn btn-ghost btn-sm" id="toggle-models-info" title="What do these columns mean?">?</button>
           <button class="btn btn-secondary btn-sm" id="toggle-add-model">Add Model</button>
         </div>
+      </div>
+
+      <!-- Info panel (collapsed by default) -->
+      <div class="info-panel collapsed" id="models-info-panel">
+        <p><strong>Price</strong> is what a provider charges per day (in MOR tokens) when someone uses their model. Every second your model is serving a request, the user pays this rate.</p>
+        <p><strong>Stake</strong> is the MOR tokens a provider locks up as collateral when listing a model. It's a deposit that shows you're serious and keeps the marketplace honest.</p>
+        <p><strong>Bids</strong> is the total number of providers offering that same model on the marketplace. More bids means more competition.</p>
+        <p><strong>My Bid</strong> is your specific price for that model. If you have an active bid, you're offering to serve that model at that rate. Users will see your bid alongside other providers.</p>
       </div>
 
       <!-- Add Model Form (collapsed by default) -->
