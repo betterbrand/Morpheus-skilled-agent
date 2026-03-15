@@ -1197,6 +1197,12 @@ select.form-input option {
   letter-spacing: 0.04em;
 }
 
+.usd-value {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent-dim);
+}
+
 .tag {
   display: inline-flex;
   align-items: center;

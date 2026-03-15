@@ -10,6 +10,7 @@
   var PROVIDER_ADDRESS = '0xa2c397849325605d8a7b08629f173540a9f1ac41';
   var REFRESH_INTERVAL_MS = 30000;
   var TOAST_DURATION_MS = 5000;
+  var morUsdPrice = null;
 
   // --- Utility ---
 
@@ -57,6 +58,25 @@
     } catch (_e) {
       return weiStr;
     }
+  }
+
+  function fetchMorPrice() {
+    return fetch('https://api.coingecko.com/api/v3/simple/price?ids=morpheusai&vs_currencies=usd')
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data && data.morpheusai && data.morpheusai.usd) {
+          morUsdPrice = data.morpheusai.usd;
+        }
+      })
+      .catch(function () { /* price fetch is best-effort */ });
+  }
+
+  function morToUsd(morAmount) {
+    if (morUsdPrice === null || !morAmount) return '';
+    var usd = parseFloat(morAmount) * morUsdPrice;
+    if (isNaN(usd) || usd === 0) return '';
+    if (usd < 0.01) return ' (~$' + usd.toFixed(6) + ')';
+    return ' (~$' + usd.toFixed(2) + ')';
   }
 
   function escapeHtml(str) {
@@ -208,7 +228,8 @@
     removeSkeleton(morEl);
 
     ethEl.textContent = extractBalanceNumber(data.eth);
-    morEl.textContent = extractBalanceNumber(data.mor);
+    var morVal = extractBalanceNumber(data.mor);
+    morEl.textContent = morVal + morToUsd(morVal);
     ethWeiEl.textContent = data.ethWei ? data.ethWei + ' wei' : '';
     morWeiEl.textContent = data.morWei ? data.morWei + ' wei' : '';
   }
@@ -281,7 +302,8 @@
       tr.appendChild(tdId);
 
       var tdPrice = document.createElement('td');
-      tdPrice.innerHTML = '<span class="mono">' + escapeHtml(weiPerSecToMorPerDay(model.pricePerSecondWei)) + '</span> <span class="wei-label">MOR/day</span>';
+      var morDay = weiPerSecToMorPerDay(model.pricePerSecondWei);
+      tdPrice.innerHTML = '<span class="mono">' + escapeHtml(morDay) + '</span> <span class="wei-label">MOR/day</span>' + (morToUsd(morDay) ? '<br><span class="usd-value">' + escapeHtml(morToUsd(morDay).trim()) + '/day</span>' : '');
       tr.appendChild(tdPrice);
 
       var tdStake = document.createElement('td');
@@ -294,7 +316,8 @@
 
       var tdMyBid = document.createElement('td');
       if (model.myBid) {
-        tdMyBid.innerHTML = '<span class="bid-price-display">' + escapeHtml(weiPerSecToMorPerDay(model.myBid.pricePerSecondWei)) + '</span> <span class="wei-label">MOR/day</span>';
+        var myBidMorDay = weiPerSecToMorPerDay(model.myBid.pricePerSecondWei);
+        tdMyBid.innerHTML = '<span class="bid-price-display">' + escapeHtml(myBidMorDay) + '</span> <span class="wei-label">MOR/day</span>' + (morToUsd(myBidMorDay) ? '<br><span class="usd-value">' + escapeHtml(morToUsd(myBidMorDay).trim()) + '/day</span>' : '');
       } else {
         tdMyBid.innerHTML = '<span class="tag tag-neutral">No bid</span>';
       }
@@ -399,7 +422,8 @@
       tbody.appendChild(tr);
     });
 
-    totalEl.textContent = formatWei(totalWei.toString()) + ' MOR';
+    var totalMor = formatWei(totalWei.toString());
+    totalEl.textContent = totalMor + ' MOR' + morToUsd(totalMor);
     claimBtn.disabled = !hasClaimable;
   }
 
@@ -742,19 +766,22 @@
       }
     });
 
-    Promise.all([
-      fetchStatus(),
-      fetchBalances(),
-      fetchProvider(),
-      fetchModels(),
-      fetchEarnings(),
-    ]).then(function () {
-      showToast('Dashboard loaded', 'success');
+    fetchMorPrice().then(function () {
+      return Promise.all([
+        fetchStatus(),
+        fetchBalances(),
+        fetchProvider(),
+        fetchModels(),
+        fetchEarnings(),
+      ]);
+    }).then(function () {
+      showToast('Dashboard loaded' + (morUsdPrice ? ' (MOR: $' + morUsdPrice.toFixed(2) + ')' : ''), 'success');
     });
 
     setInterval(function () {
       fetchStatus();
       fetchBalances();
+      fetchMorPrice();
     }, REFRESH_INTERVAL_MS);
   }
 
