@@ -43,6 +43,20 @@
     return formatted.split(' ')[0] || '--';
   }
 
+  function weiToGwei(weiStr) {
+    if (!weiStr || weiStr === '0') return '0';
+    try {
+      var n = BigInt(weiStr);
+      var gwei = n / 1000000000n;
+      var remainder = n % 1000000000n;
+      if (remainder === 0n) return gwei.toLocaleString();
+      var frac = remainder.toString().padStart(9, '0').replace(/0+$/, '');
+      return gwei.toLocaleString() + '.' + frac;
+    } catch (_e) {
+      return weiStr;
+    }
+  }
+
   function escapeHtml(str) {
     var div = document.createElement('div');
     div.textContent = str;
@@ -265,7 +279,7 @@
       tr.appendChild(tdId);
 
       var tdPrice = document.createElement('td');
-      tdPrice.innerHTML = '<span class="mono">' + escapeHtml(model.pricePerSecondWei || '0') + '</span> <span class="wei-label">wei/s</span>';
+      tdPrice.innerHTML = '<span class="mono">' + escapeHtml(weiToGwei(model.pricePerSecondWei)) + '</span> <span class="wei-label">gwei/s</span>';
       tr.appendChild(tdPrice);
 
       var tdStake = document.createElement('td');
@@ -278,7 +292,7 @@
 
       var tdMyBid = document.createElement('td');
       if (model.myBid) {
-        tdMyBid.innerHTML = '<span class="bid-price-display">' + escapeHtml(model.myBid.pricePerSecondWei || '0') + '</span> <span class="wei-label">wei/s</span>';
+        tdMyBid.innerHTML = '<span class="bid-price-display">' + escapeHtml(weiToGwei(model.myBid.pricePerSecondWei)) + '</span> <span class="wei-label">gwei/s</span>';
       } else {
         tdMyBid.innerHTML = '<span class="tag tag-neutral">No bid</span>';
       }
