@@ -1189,6 +1189,14 @@ select.form-input option {
   font-size: 11px;
 }
 
+.wei-label {
+  font-family: var(--font-body);
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .tag {
   display: inline-flex;
   align-items: center;

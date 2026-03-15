@@ -265,7 +265,7 @@
       tr.appendChild(tdId);
 
       var tdPrice = document.createElement('td');
-      tdPrice.innerHTML = '<span class="mono">' + escapeHtml(model.pricePerSecond) + '</span>';
+      tdPrice.innerHTML = '<span class="mono">' + escapeHtml(model.pricePerSecondWei || '0') + '</span> <span class="wei-label">wei/s</span>';
       tr.appendChild(tdPrice);
 
       var tdStake = document.createElement('td');
@@ -278,7 +278,7 @@
 
       var tdMyBid = document.createElement('td');
       if (model.myBid) {
-        tdMyBid.innerHTML = '<span class="bid-price-display">' + escapeHtml(model.myBid.pricePerSecond) + '</span>';
+        tdMyBid.innerHTML = '<span class="bid-price-display">' + escapeHtml(model.myBid.pricePerSecondWei || '0') + '</span> <span class="wei-label">wei/s</span>';
       } else {
         tdMyBid.innerHTML = '<span class="tag tag-neutral">No bid</span>';
       }
