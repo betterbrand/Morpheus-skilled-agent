@@ -130,7 +130,13 @@
     <section class="card card-wide card-models" id="models-card">
       <div class="card-header">
         <h2 class="card-title">Marketplace Models</h2>
-        <button class="btn btn-secondary btn-sm" id="toggle-add-model">Add Model</button>
+        <div class="card-header-actions">
+          <div class="filter-toggle" id="model-filter-toggle">
+            <button class="filter-btn active" data-filter="mine">My Models</button>
+            <button class="filter-btn" data-filter="all">All Models</button>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="toggle-add-model">Add Model</button>
+        </div>
       </div>
 
       <!-- Add Model Form (collapsed by default) -->
@@ -208,6 +214,14 @@
           </div>
           <p class="empty-text">No models registered on the marketplace</p>
           <p class="empty-hint">Add a model to start serving inference requests</p>
+        </div>
+        <div class="pagination hidden" id="models-pagination">
+          <span class="pagination-info" id="pagination-info"></span>
+          <div class="pagination-controls">
+            <button class="btn btn-ghost btn-sm" id="page-prev" disabled>&larr; Prev</button>
+            <span class="pagination-page" id="pagination-page"></span>
+            <button class="btn btn-ghost btn-sm" id="page-next">Next &rarr;</button>
+          </div>
         </div>
       </div>
     </section>

@@ -619,6 +619,77 @@ body::after {
 .field-value.status-registered { color: var(--success); }
 .field-value.status-unregistered { color: var(--error); }
 
+/* --- Filter Toggle --- */
+.card-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.filter-toggle {
+  display: flex;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+
+.filter-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all var(--t-fast);
+}
+
+.filter-btn:hover {
+  color: var(--text-secondary);
+}
+
+.filter-btn.active {
+  background: var(--accent);
+  color: var(--bg-void);
+}
+
+/* --- Pagination --- */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-3) var(--sp-5);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.pagination.hidden {
+  display: none;
+}
+
+.pagination-info {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.pagination-page {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  min-width: 60px;
+  text-align: center;
+}
+
 /* --- Tables --- */
 .table-container {
   overflow-x: auto;

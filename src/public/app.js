@@ -101,6 +101,12 @@
     if (el) el.classList.remove('loading-skeleton');
   }
 
+  // --- Model filter and pagination state ---
+  var modelFilter = 'mine'; // 'mine' or 'all'
+  var allModels = [];
+  var currentPage = 1;
+  var PAGE_SIZE = 15;
+
   // --- Render Functions ---
 
   function renderHealth(data) {
@@ -208,21 +214,46 @@
   }
 
   function renderModels(models) {
+    allModels = models || [];
+    currentPage = 1;
+    renderFilteredModels();
+  }
+
+  function renderFilteredModels() {
     var tbody = $('models-tbody');
     var emptyEl = $('models-empty');
+    var paginationEl = $('models-pagination');
 
     clearChildren(tbody);
 
-    if (!models || models.length === 0) {
+    var filtered = allModels;
+    if (modelFilter === 'mine') {
+      filtered = allModels.filter(function (m) { return !!m.myBid; });
+    }
+
+    if (!filtered || filtered.length === 0) {
       $('models-table').style.display = 'none';
       emptyEl.classList.remove('hidden');
+      paginationEl.classList.add('hidden');
+      if (modelFilter === 'mine') {
+        emptyEl.querySelector('.empty-text').textContent = 'No models with active bids';
+        emptyEl.querySelector('.empty-hint').textContent = 'Switch to "All Models" to see the full marketplace';
+      } else {
+        emptyEl.querySelector('.empty-text').textContent = 'No models registered on the marketplace';
+        emptyEl.querySelector('.empty-hint').textContent = 'Add a model to start serving inference requests';
+      }
       return;
     }
 
     $('models-table').style.display = '';
     emptyEl.classList.add('hidden');
 
-    models.forEach(function (model) {
+    var totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+    if (currentPage > totalPages) currentPage = totalPages;
+    var start = (currentPage - 1) * PAGE_SIZE;
+    var pageModels = filtered.slice(start, start + PAGE_SIZE);
+
+    pageModels.forEach(function (model) {
       var tr = document.createElement('tr');
 
       var tdName = document.createElement('td');
@@ -277,6 +308,21 @@
       tr.appendChild(tdActions);
       tbody.appendChild(tr);
     });
+
+    // Pagination
+    if (totalPages > 1) {
+      paginationEl.classList.remove('hidden');
+      $('pagination-info').textContent = filtered.length + ' models';
+      $('pagination-page').textContent = currentPage + ' / ' + totalPages;
+      $('page-prev').disabled = currentPage <= 1;
+      $('page-next').disabled = currentPage >= totalPages;
+    } else {
+      paginationEl.classList.remove('hidden');
+      $('pagination-info').textContent = filtered.length + ' model' + (filtered.length === 1 ? '' : 's');
+      $('pagination-page').textContent = '';
+      $('page-prev').disabled = true;
+      $('page-next').disabled = true;
+    }
   }
 
   function renderEarnings(data) {
@@ -617,6 +663,28 @@
       }).catch(function () {
         showToast(addr, 'info');
       });
+    });
+
+    // Filter toggle
+    var filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        filterBtns.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        modelFilter = btn.getAttribute('data-filter');
+        currentPage = 1;
+        renderFilteredModels();
+      });
+    });
+
+    // Pagination
+    $('page-prev').addEventListener('click', function () {
+      if (currentPage > 1) { currentPage--; renderFilteredModels(); }
+    });
+    $('page-next').addEventListener('click', function () {
+      var filtered = modelFilter === 'mine' ? allModels.filter(function (m) { return !!m.myBid; }) : allModels;
+      var totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+      if (currentPage < totalPages) { currentPage++; renderFilteredModels(); }
     });
 
     $('toggle-add-model').addEventListener('click', toggleAddModelForm);
