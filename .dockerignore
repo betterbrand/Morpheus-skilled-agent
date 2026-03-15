@@ -8,6 +8,7 @@ config.json
 *.md
 *.png
 *.pdf
-*.html
 .playwright-mcp
 .github
+# Allow src/public/ HTML/JS/CSS through
+!src/public/

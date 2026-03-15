@@ -16,7 +16,7 @@ const ALLOWED_ENDPOINTS: Array<[string, string, AllowMode]> = [
   ["GET", "/blockchain/models", "prefix"],   // covers /blockchain/models and /blockchain/models/{id}/bids
   ["GET", "/blockchain/bids", "prefix"],
   ["GET", "/blockchain/providers", "prefix"],  // covers /blockchain/providers and /{addr}/bids/active
-  ["GET", "/blockchain/sessions", "exact"],
+  ["GET", "/blockchain/sessions", "prefix"],  // covers /blockchain/sessions and /blockchain/sessions/provider
   ["GET", "/blockchain/token", "exact"],
   ["GET", "/proxy/sessions", "prefix"],       // covers /proxy/sessions/{id}/providerClaimableBalance
   ["GET", "/wallet", "exact"],

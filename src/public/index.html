@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Morpheus Node Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Toast container -->
+  <div id="toast-container"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo-mark">M</div>
+      <div class="header-titles">
+        <h1 class="header-title">Morpheus Node Manager</h1>
+        <div class="header-subtitle">Provider Operations Dashboard</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="provider-address" id="provider-address">
+        <span class="address-label">PROVIDER</span>
+        <button class="address-value" id="address-copy-btn" title="Copy full address">
+          <span id="address-text">Loading...</span>
+          <svg class="copy-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="5" y="5" width="9" height="9" rx="1.5"/>
+            <path d="M3 11V3a1.5 1.5 0 011.5-1.5H11"/>
+          </svg>
+        </button>
+      </div>
+      <div class="connection-status" id="connection-status">
+        <span class="status-dot status-loading"></span>
+        <span class="status-text">Connecting</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main grid -->
+  <main class="dashboard">
+
+    <!-- Health Status -->
+    <section class="card card-health" id="health-card">
+      <div class="card-header">
+        <h2 class="card-title">Node Health</h2>
+        <span class="auto-refresh-badge">Auto-refresh 30s</span>
+      </div>
+      <div class="health-content" id="health-content">
+        <div class="health-indicator-container">
+          <div class="health-indicator" id="health-indicator">
+            <div class="health-ring"></div>
+            <span class="health-status-text" id="health-status-text">--</span>
+          </div>
+        </div>
+        <div class="health-checks" id="health-checks">
+          <div class="health-check loading-skeleton">
+            <span class="check-label">Process</span>
+            <span class="check-value">--</span>
+          </div>
+          <div class="health-check loading-skeleton">
+            <span class="check-label">Blockchain</span>
+            <span class="check-value">--</span>
+          </div>
+          <div class="health-check loading-skeleton">
+            <span class="check-label">Latest Block</span>
+            <span class="check-value">--</span>
+          </div>
+          <div class="health-check loading-skeleton">
+            <span class="check-label">Active Bids</span>
+            <span class="check-value">--</span>
+          </div>
+          <div class="health-check loading-skeleton">
+            <span class="check-label">Active Sessions</span>
+            <span class="check-value">--</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Balances -->
+    <section class="card card-balances" id="balances-card">
+      <div class="card-header">
+        <h2 class="card-title">Wallet Balances</h2>
+      </div>
+      <div class="balances-grid" id="balances-content">
+        <div class="balance-item">
+          <span class="balance-label">ETH</span>
+          <span class="balance-value loading-skeleton" id="balance-eth">--</span>
+          <span class="balance-wei" id="balance-eth-wei"></span>
+        </div>
+        <div class="balance-item">
+          <span class="balance-label">MOR</span>
+          <span class="balance-value loading-skeleton" id="balance-mor">--</span>
+          <span class="balance-wei" id="balance-mor-wei"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Provider Info -->
+    <section class="card card-provider" id="provider-card">
+      <div class="card-header">
+        <h2 class="card-title">Provider Registration</h2>
+      </div>
+      <div class="provider-content" id="provider-content">
+        <div class="provider-field loading-skeleton">
+          <span class="field-label">Status</span>
+          <span class="field-value" id="provider-status">--</span>
+        </div>
+        <div class="provider-field loading-skeleton">
+          <span class="field-label">Stake</span>
+          <span class="field-value" id="provider-stake">--</span>
+        </div>
+        <div class="provider-field loading-skeleton">
+          <span class="field-label">Fee</span>
+          <span class="field-value" id="provider-fee">--</span>
+        </div>
+        <div class="provider-field loading-skeleton">
+          <span class="field-label">Endpoint</span>
+          <span class="field-value mono" id="provider-endpoint">--</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Models -->
+    <section class="card card-wide card-models" id="models-card">
+      <div class="card-header">
+        <h2 class="card-title">Marketplace Models</h2>
+        <button class="btn btn-secondary btn-sm" id="toggle-add-model">Add Model</button>
+      </div>
+
+      <!-- Add Model Form (collapsed by default) -->
+      <div class="add-model-form collapsed" id="add-model-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="model-api-type">API Type</label>
+            <select class="form-input" id="model-api-type">
+              <option value="openai">OpenAI</option>
+              <option value="prodia-v2">Prodia v2</option>
+              <option value="claudeai">Claude AI</option>
+              <option value="hyperbolic-sd">Hyperbolic SD</option>
+              <option value="prodia-sd">Prodia SD</option>
+              <option value="prodia-sdxl">Prodia SDXL</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="model-name">Model Name</label>
+            <input class="form-input" id="model-name" type="text" placeholder="e.g. glm-4-9b">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="model-ipfs-cid">IPFS CID</label>
+            <input class="form-input" id="model-ipfs-cid" type="text" placeholder="Model card IPFS CID">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="model-api-url">API URL</label>
+            <input class="form-input" id="model-api-url" type="text" placeholder="https://api.venice.ai/api/v1">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="model-api-key">API Key</label>
+            <input class="form-input" id="model-api-key" type="password" placeholder="Backend API key">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="model-stake-wei">Stake (wei)</label>
+            <input class="form-input mono" id="model-stake-wei" type="text" placeholder="100000000000000000">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="model-price-wei">Price/sec (wei)</label>
+            <input class="form-input mono" id="model-price-wei" type="text" placeholder="100000000">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" id="submit-add-model">Register Model</button>
+          <button class="btn btn-ghost" id="cancel-add-model">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Models Table -->
+      <div class="table-container" id="models-table-container">
+        <table class="data-table" id="models-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Model ID</th>
+              <th>Price / sec</th>
+              <th>Stake</th>
+              <th>Bids</th>
+              <th>My Bid</th>
+              <th class="th-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="models-tbody">
+            <tr class="loading-row">
+              <td colspan="7"><div class="loading-skeleton">&nbsp;</div></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="empty-state hidden" id="models-empty">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+              <line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+          </div>
+          <p class="empty-text">No models registered on the marketplace</p>
+          <p class="empty-hint">Add a model to start serving inference requests</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Earnings -->
+    <section class="card card-wide card-earnings" id="earnings-card">
+      <div class="card-header">
+        <h2 class="card-title">Session Earnings</h2>
+        <button class="btn btn-primary btn-sm" id="claim-all-btn" disabled>Claim All</button>
+      </div>
+      <div class="earnings-summary" id="earnings-summary">
+        <div class="earnings-total">
+          <span class="earnings-total-label">TOTAL CLAIMABLE</span>
+          <span class="earnings-total-value loading-skeleton" id="earnings-total-value">--</span>
+        </div>
+      </div>
+      <div class="table-container" id="earnings-table-container">
+        <table class="data-table" id="earnings-table">
+          <thead>
+            <tr>
+              <th>Session ID</th>
+              <th>Claimable</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="earnings-tbody">
+            <tr class="loading-row">
+              <td colspan="3"><div class="loading-skeleton">&nbsp;</div></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="empty-state hidden" id="earnings-empty">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+            </svg>
+          </div>
+          <p class="empty-text">No claimable sessions</p>
+          <p class="empty-hint">Earnings will appear here after serving inference requests</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bid adjustment modal -->
+  <div class="modal-overlay hidden" id="bid-modal-overlay">
+    <div class="modal" id="bid-modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Adjust Bid Price</h3>
+        <button class="btn btn-ghost modal-close" id="bid-modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-info">Model: <span class="mono" id="bid-modal-model-id"></span></p>
+        <p class="modal-info">Current price: <span class="mono" id="bid-modal-current-price"></span> wei/sec</p>
+        <div class="form-group">
+          <label class="form-label" for="bid-new-price">New Price (wei/sec)</label>
+          <input class="form-input mono" id="bid-new-price" type="text" placeholder="Enter new price in wei">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="bid-submit">Update Price</button>
+        <button class="btn btn-ghost" id="bid-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Remove model confirmation modal -->
+  <div class="modal-overlay hidden" id="remove-modal-overlay">
+    <div class="modal" id="remove-modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Remove Model</h3>
+        <button class="btn btn-ghost modal-close" id="remove-modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-info">This action will deregister the model and remove all associated bids.</p>
+        <p class="modal-info">Model ID: <span class="mono" id="remove-modal-model-id"></span></p>
+        <div class="form-group">
+          <label class="form-label" for="remove-confirm">Type <span class="mono confirm-code" id="remove-confirm-code"></span> to confirm</label>
+          <input class="form-input mono" id="remove-confirm" type="text" placeholder="DELETE_MODEL_...">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-danger" id="remove-submit" disabled>Remove Model</button>
+        <button class="btn btn-ghost" id="remove-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span class="footer-text">Morpheus Lumerin Network</span>
+    <span class="footer-separator"></span>
+    <span class="footer-text" id="footer-uptime"></span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

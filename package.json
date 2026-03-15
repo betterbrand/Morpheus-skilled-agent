@@ -9,15 +9,19 @@
   },
   "bin": {
     "morpheus-node-manager": "dist/cli.js",
-    "morpheus-node-manager-mcp": "dist/mcp-server.js"
+    "morpheus-node-manager-mcp": "dist/mcp-server.js",
+    "morpheus-node-manager-dashboard": "dist/dashboard.js"
   },
-  "files": ["dist/"],
+  "files": [
+    "dist/"
+  ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp -r src/public dist/public",
     "build:watch": "tsc --watch",
     "dev": "node --watch dist/cli.js",
     "test": "npm run build && node --test test/core.test.js",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "copy:public": "cp -r src/public dist/public"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",

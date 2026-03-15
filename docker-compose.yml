@@ -3,14 +3,23 @@ services:
     image: morpheus-node-manager
     build: .
     restart: unless-stopped
+    network_mode: host
     volumes:
       - ./config.json:/config/config.json:ro
       - ops-agent-data:/root
     environment:
       - NODE_ENV=production
-    # Runs --once on each container start; paired with restart: unless-stopped
-    # this gives cron-like behavior via the checkIntervalMs in config.json.
-    # Alternatively, set the CMD to daemon mode (remove --once) for a long-running container.
+
+  dashboard:
+    image: morpheus-node-manager
+    build: .
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./config.json:/config/config.json:ro
+    environment:
+      - NODE_ENV=production
+    command: ["node", "dist/dashboard.js", "--host", "0.0.0.0", "--port", "3000", "--url", "http://localhost:8082", "--user", "admin", "--password", "admin", "--insecure"]
 
 volumes:
   ops-agent-data:
