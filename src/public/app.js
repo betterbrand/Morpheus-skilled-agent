@@ -43,15 +43,17 @@
     return formatted.split(' ')[0] || '--';
   }
 
-  function weiToGwei(weiStr) {
+  function weiPerSecToMorPerDay(weiStr) {
     if (!weiStr || weiStr === '0') return '0';
     try {
-      var n = BigInt(weiStr);
-      var gwei = n / 1000000000n;
-      var remainder = n % 1000000000n;
-      if (remainder === 0n) return gwei.toLocaleString();
-      var frac = remainder.toString().padStart(9, '0').replace(/0+$/, '');
-      return gwei.toLocaleString() + '.' + frac;
+      // weiPerSec * 86400 / 1e18 = MOR/day
+      var weiPerSec = BigInt(weiStr);
+      var weiPerDay = weiPerSec * 86400n;
+      var whole = weiPerDay / 1000000000000000000n;
+      var remainder = weiPerDay % 1000000000000000000n;
+      var frac = remainder.toString().padStart(18, '0').slice(0, 6).replace(/0+$/, '');
+      if (!frac) return whole.toLocaleString();
+      return whole.toLocaleString() + '.' + frac;
     } catch (_e) {
       return weiStr;
     }
@@ -279,7 +281,7 @@
       tr.appendChild(tdId);
 
       var tdPrice = document.createElement('td');
-      tdPrice.innerHTML = '<span class="mono">' + escapeHtml(weiToGwei(model.pricePerSecondWei)) + '</span> <span class="wei-label">gwei/s</span>';
+      tdPrice.innerHTML = '<span class="mono">' + escapeHtml(weiPerSecToMorPerDay(model.pricePerSecondWei)) + '</span> <span class="wei-label">MOR/day</span>';
       tr.appendChild(tdPrice);
 
       var tdStake = document.createElement('td');
@@ -292,7 +294,7 @@
 
       var tdMyBid = document.createElement('td');
       if (model.myBid) {
-        tdMyBid.innerHTML = '<span class="bid-price-display">' + escapeHtml(weiToGwei(model.myBid.pricePerSecondWei)) + '</span> <span class="wei-label">gwei/s</span>';
+        tdMyBid.innerHTML = '<span class="bid-price-display">' + escapeHtml(weiPerSecToMorPerDay(model.myBid.pricePerSecondWei)) + '</span> <span class="wei-label">MOR/day</span>';
       } else {
         tdMyBid.innerHTML = '<span class="tag tag-neutral">No bid</span>';
       }
