@@ -434,6 +434,6 @@ npm test
 
 ## About Morpheus
 
-[Morpheus](https://mor.org) is a decentralized AI marketplace on Arbitrum. Providers stake MOR tokens, register models, and post bids to sell inference capacity to users. The proxy-router is the provider's node software: it manages sessions, validates payments on-chain, and routes inference requests to a backend (Venice AI, AkashChat, OpenRouter, local Ollama, etc.). This tool wraps the proxy-router's REST API to make provider operations scriptable and agent-accessible.
+[Morpheus](https://mor.org) is a decentralized AI marketplace. Providers stake MOR tokens, register models, and post bids to sell inference capacity to users. The proxy-router is the provider's node software: it manages sessions, validates payments on-chain, and routes inference requests to a backend (Venice AI, AkashChat, OpenRouter, local Ollama, etc.). This tool wraps the proxy-router's REST API to make provider operations scriptable and agent-accessible.
 
 **Published at:** https://github.com/betterbrand/Morpheus-skilled-agent
