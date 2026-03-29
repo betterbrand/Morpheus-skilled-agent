@@ -4,7 +4,7 @@ A portable Node.js/TypeScript tool for managing a [Morpheus Lumerin](https://mor
 
 - **CLI** for terminal use
 - **MCP server** for AI coding agents (Claude Code, Cline, Continue.dev, OpenCode)
-- **OpenAI function-calling schema** for any agent using the OpenAI tools API
+- **Function-calling schema** (OpenAI-compatible) for any agent using the tools API
 
 An optional autonomous **ops agent** monitors the node on a configurable interval, auto-claims earnings, alerts on low balances, and restarts the proxy-router when it goes down.
 

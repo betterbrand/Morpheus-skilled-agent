@@ -5,7 +5,7 @@ flowchart TB
     subgraph interfaces["Interfaces"]
         CLI["CLI\nmorpheus-node-manager"]
         MCP["MCP Server\nmorpheus-node-manager-mcp"]
-        OAI["OpenAI Tools\ntools + handleToolCall()"]
+        OAI["Function Calling\ntools + handleToolCall()"]
     end
 
     subgraph agents["AI Agents"]
@@ -67,7 +67,7 @@ All three interfaces share the same core layer. The interface you choose depends
 
 - **CLI** -- direct terminal commands, scriptable, JSON output to stdout
 - **MCP Server** -- stdio-based protocol for AI coding agents
-- **OpenAI Tools** -- function-calling schema for any OpenAI-compatible agent
+- **Function Calling** -- schema for any OpenAI-compatible agent
 
 ### Core Layer
 
