@@ -196,15 +196,21 @@ export class OpsAgent {
       }
     }
 
-    // 4. Bid presence check
+    // 4. Bid presence check — only monitor models we actually bid on
     try {
       const models = await listModels(this.client);
-      const missingBids = models.filter((m) => m.myBid === undefined);
-      if (missingBids.length > 0) {
-        const names = missingBids.map((m) => m.name).join(", ");
-        issues.push(`Models without active bids: ${names}`);
-        this.audit.write("missing_bids", { models: missingBids.map((m) => m.id) });
+      const ourModels = models.filter((m) => m.myBid !== undefined);
+
+      if (ourModels.length === 0) {
+        issues.push("No active bids found on any marketplace model");
+        this.audit.write("no_bids", {});
       }
+
+      this.audit.write("bid_check", {
+        totalMarketModels: models.length,
+        ourBids: ourModels.length,
+        ourModels: ourModels.map((m) => m.name),
+      });
     } catch (err) {
       // Non-critical — don't add to issues
       console.error("[agent] Bid check failed:", err instanceof Error ? err.message : err);

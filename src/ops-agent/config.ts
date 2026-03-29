@@ -73,7 +73,9 @@ export function loadOpsConfig(configPath: string): OpsConfig {
     const u = new URL(config.apiUrl);
     if (u.protocol === "http:") {
       const host = u.hostname;
-      const isLocal = host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0" || host === "::1";
+      const isLocal = host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0" || host === "::1"
+        || host === "host.docker.internal"
+        || /^(10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|100\.)/.test(host);
       if (!isLocal) {
         throw new Error(`apiUrl uses http:// for remote host "${host}". Use https:// for remote connections.`);
       }
