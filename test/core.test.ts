@@ -27,7 +27,7 @@ const routes: MockRoute[] = [
   },
   {
     method: "GET", path: "/wallet",
-    response: { address: "0xa2c397849325605d8a7b08629f173540a9f1ac41" },
+    response: { address: "0x1111111111111111111111111111111111111111" },
   },
   // Real API returns lowercase keys: { eth, mor }
   {
@@ -40,10 +40,10 @@ const routes: MockRoute[] = [
     response: {
       providers: [
         {
-          Address: "0xa2c397849325605d8a7b08629f173540a9f1ac41",
+          Address: "0x1111111111111111111111111111111111111111",
           Stake: "250200000000000000000",
           Fee: 100,
-          Endpoint: "5.161.177.217:3333",
+          Endpoint: "203.0.113.10:3333",
           IsDeleted: false,
           CreatedAt: "1772837137",
         },
@@ -60,7 +60,7 @@ const routes: MockRoute[] = [
           IpfsCID: "QmFakeModel1",
           Fee: 100000000,
           Stake: 100000000000000000,
-          Owner: "0xa2c397849325605d8a7b08629f173540a9f1ac41",
+          Owner: "0x1111111111111111111111111111111111111111",
           Name: "GLM-5",
           Tags: ["LLM", "chat"],
           IsDeleted: false,
@@ -77,7 +77,7 @@ const routes: MockRoute[] = [
         {
           Id: "0xbid1aabbccdd",
           ModelAgentId: "0xmodel1aabbccdd",
-          Provider: "0xa2c397849325605d8a7b08629f173540a9f1ac41",
+          Provider: "0x1111111111111111111111111111111111111111",
           PricePerSecond: "10000000000",
           Nonce: "0",
           CreatedAt: "1772837215",
@@ -94,7 +94,7 @@ const routes: MockRoute[] = [
         {
           Id: "0xbid1aabbccdd",
           ModelAgentId: "0xmodel1aabbccdd",
-          Provider: "0xa2c397849325605d8a7b08629f173540a9f1ac41",
+          Provider: "0x1111111111111111111111111111111111111111",
           PricePerSecond: "10000000000",
           Nonce: "0",
           CreatedAt: "1772837215",
@@ -105,13 +105,13 @@ const routes: MockRoute[] = [
   },
   // Active bids endpoint also wraps
   {
-    method: "GET", path: "/blockchain/providers/0xa2c397849325605d8a7b08629f173540a9f1ac41/bids/active",
+    method: "GET", path: "/blockchain/providers/0x1111111111111111111111111111111111111111/bids/active",
     response: {
       bids: [
         {
           Id: "0xbid1aabbccdd",
           ModelAgentId: "0xmodel1aabbccdd",
-          Provider: "0xa2c397849325605d8a7b08629f173540a9f1ac41",
+          Provider: "0x1111111111111111111111111111111111111111",
           PricePerSecond: "10000000000",
           Nonce: "0",
           CreatedAt: "1772837215",
@@ -348,7 +348,7 @@ describe("config", () => {
   it("rejects http:// for remote URLs", async () => {
     const { loadConfig } = await import("../src/config.js");
     assert.throws(
-      () => loadConfig({ url: "http://5.161.177.217:8082" }),
+      () => loadConfig({ url: "http://203.0.113.10:8082" }),
       /Refusing http/
     );
   });
@@ -361,8 +361,8 @@ describe("config", () => {
 
   it("allows http:// for remote with --insecure", async () => {
     const { loadConfig } = await import("../src/config.js");
-    const cfg = loadConfig({ url: "http://5.161.177.217:8082", password: "test", insecure: true });
-    assert.equal(cfg.apiUrl, "http://5.161.177.217:8082");
+    const cfg = loadConfig({ url: "http://203.0.113.10:8082", password: "test", insecure: true });
+    assert.equal(cfg.apiUrl, "http://203.0.113.10:8082");
   });
 
   it("strips trailing slash from URL", async () => {

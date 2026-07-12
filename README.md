@@ -35,7 +35,7 @@ flowchart TB
         ALERTS["alerts.ts\nTelegram / Slack webhook"]
     end
 
-    subgraph hetzner["Hetzner VPS 5.161.177.217"]
+    subgraph hetzner["Provider VPS"]
         ROUTER["morpheus-router\nproxy-router process\n:3333 inference  :8082 API"]
     end
 

@@ -10,12 +10,12 @@ Portable tool for any AI agent to monitor and manage a Morpheus proxy-router nod
 - Claim session earnings
 - Autonomous ops agent with circuit breakers and webhook alerts
 
-## Our Node
+## Example Node
 
-- Provider address: `0xa2c397849325605d8a7b08629f173540a9f1ac41`
-- Hetzner VPS: `5.161.177.217`
+- Provider address: `<PROVIDER_ADDRESS>`
+- VPS: `<VPS_IP>`
 - API port: `8082` (proxy-router REST API)
-- Models offered: GLM-5, Kimi K2.5 (backed by Venice DIEM)
+- Models offered: e.g. GLM-5, Kimi K2.5 (backed by Venice DIEM)
 
 ## Architecture
 
